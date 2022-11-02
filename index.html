@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<!-- VeP http://web.unibas.it/bloisi/corsi/visione-e-percezione.html -->
+<html lang="en">
+<!--<![endif]-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>How are You?</title>
+    <!-- Meta -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="How are You? L'etichettatore semi-automatico">
+    <meta name="author" content="Domenico Bloisi adapted a 3rd Wave Media template">
+    <link rel="shortcut icon" href="http://web.unibas.it/bloisi/tutorial/favicon.ico">
+    <link href="VeP-progetto_files/css.txt" rel="stylesheet" type="text/css">
+    <link href="VeP-progetto_files/css1.txt" rel="stylesheet" type="text/css">
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="VeP-progetto_files/bootstrap.css">
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" href="VeP-progetto_files/font-awesome.css">
+
+    <!-- Theme CSS -->
+    <link id="theme-style" rel="stylesheet" href="VeP-progetto_files/styles.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+    <!-- ******HEADER****** -->
+    <header class="header">
+        <div class="container">
+            <img class="profile-image img-responsive" width="250" src="img/cover.png" alt="Cover">
+            <div class="profile-content pull-left">
+                <h1 class="name">How are You?</h1>
+                <h2 class="desc">L'etichettatore semi-automatico per la generazione<br />di dataset FER-2013 like</h2>
+            </div>
+
+            <div class="profile-content pull-right">
+                <img class="profile-image img-responsive pull-left"
+                    src="http://web.unibas.it/bloisi/assets/images/logo.png" alt="unibas logo" height=97 width=312 />
+
+                <p>&nbsp;</p>
+                <h3 class="desc">
+                    <a href="http://web.unibas.it/bloisi/corsi/visione-e-percezione.html" target="_blank">
+                        Corso di Visione e Percezione
+                    </a>
+                </h3>
+            </div>
+
+        </div>
+        <!--//container-->
+    </header>
+    <!--//header-->
+
+    <div class="container sections-wrapper">
+        <div class="row">
+            <div class="primary col-md-8 col-sm-12 col-xs-12">
+
+                <section class="about section">
+                    <div class="section-inner">
+                        <h2 class="heading"><a id="contenuti"></a>Contenuti</h2>
+                        <div class="content">
+                            <ol>
+                                <li><a href="#problema">Problema</a></li>
+                                <li><a href="#motivazioni">Motivazioni</a></li>
+                                <li><a href="#goals">Obiettivi</a></li>
+                                <li><a href="#preprocessing">Pipeline di Preprocessing</a></li>
+                                <li><a href="#classificatori">Classificatori</a></li>
+                                <li><a href="#codice">Implementazione e Codice</a></li>
+                                <li><a href="#applicazione">How are You?</a></li>
+                                <li><a href="#appendice">Appendice: Emoji Detector</a></li>
+                            </ol>
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </section>
+                <!--//section-->
+
+                <section class="about section">
+                    <div class="section-inner">
+                        <h2 class="heading"><a id="problema"></a>Problema</h2>
+                        <div class="content">
+                            <p>
+                                La generazione di dataset per l'addestramento di modelli di emotion recognition risulta
+                                un'operazione ripetitiva e tediosa.
+                            </p>
+                            <p>
+                                A titolo di esempio, si prenda in considerazione il dataset
+                                <a href="https://www.kaggle.com/datasets/msambare/fer2013" target="_blank">FER-2013</a>.
+                                <br />
+                                Questo consiste in una serie di immagini in scala di grigi di dimensione 48 x 48 pixel,
+                                ciascuna etichettata secondo una delle seguenti categorie:
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <ul>
+                                        <li>Angry</li>
+                                        <li>Disgust</li>
+                                        <li>Fear</li>
+                                        <li>Happy</li>
+                                        <li>Neutral</li>
+                                        <li>Sad</li>
+                                        <li>Surprise</li>
+                                    </ul>
+                                </div>
+                                <div class="col-xs-8">
+                                    <img src="img/dataset-cover.png" class="img-responsive" alt="Dataset Cover" />
+                                    <p class="img-description">Esempio dati</p>
+                                </div>
+                            </div>
+                            </p>
+                            <p>
+                                Volendo generare nuove immagini per il dataset, sarebbe necessario:
+                            <ol>
+                                <li>Identificare una serie di immagini da etichettare;</li>
+                                <li>Ritagliare e convertire in scala di grigi le singole immagini;</li>
+                                <li>Etichettare <strong>manualmente</strong> tutti i file (es. suddividendoli nelle
+                                    cartelle opportune).</li>
+                            </ol>
+                            </p>
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </section>
+                <!--//section-->
+
+                <section class="about section">
+                    <div class="section-inner">
+                        <h2 class="heading"><a id="motivazioni"></a>Motivazioni</h2>
+                        <div class="content">
+                            <p>
+                                Realizzando un etichettatore semi-automatico di dataset simil FER-2013, il processo si
+                                semplificherebbe notevolmente, permettendo di aumentare la quantità di dati
+                                associati alle varie emozioni.
+                            </p>
+                            <p>
+                                Inoltre, sarebbe relativamente semplice introdurre nuove classi, permettendo di generare
+                                dataset il cui scopo va oltre quello di FER-2013 (es. dataset utile all'addestramento di
+                                modelli di <em>drowsiness detection</em>).
+                            </p>
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </section>
+                <!--//section-->
+
+                <section class="about section">
+                    <div class="section-inner">
+                        <h2 class="heading"><a id="goals"></a>Obiettivi</h2>
+                        <div class="content">
+                            Al fine di creare l'etichettatore, è necessario seguire i seguenti passi:
+                            <ol>
+                                <li>Sviluppo di una pipeline di preprocessing in grado di estrarre e processare uno o
+                                    più volti a partire da un'immagine;</li>
+                                <li>Addestramento di un modello di machine learning in grado di assegnare
+                                    automaticamente un emozione ad un volto;</li>
+                                <li>Sviluppo dell'applicazione;</li>
+                                <li>Integrazione della pipeline e del modello.</li>
+                            </ol>
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </section>
+                <!--//section-->
+
+                <section class="about section">
+                    <div class="section-inner">
+                        <h2 class="heading"><a id="preprocessing"></a>Pipeline di Preprocessing</h2>
+                        <div class="content">
+                            <p>
+                                Per poter estrarre ed elaborare uno o più volti a partire da un'immagine, è stata
+                                sviluppata una pipeline di preprocessing specifica per questo caso di studio.
+                            </p>
+                            <p>
+                                Questa consta di 4 passi:
+                            <ol>
+                                <li>Face detection (tramite un algoritmo ad-hoc);</li>
+                                <li>Crop della zona dell'immagine corrispondente al volto;</li>
+                                <li>Rescaling dell'immagine;</li>
+                                <li>Conversione in scala di grigi.</li>
+                            </ol>
+                            </p>
+                            <p>Sono stati utilizzati due differenti algoritmi di face detection:
+                                <a href="https://google.github.io/mediapipe/solutions/face_detection.html"
+                                    target="_blank">
+                                    MediaPipe Face Detection
+                                </a>
+                                e
+                                <a href="https://docs.opencv.org/3.4/d2/d99/tutorial_js_face_detection.html"
+                                    target="_blank">
+                                    OpenCV Haar Cascades
+                                </a>.
+                            </p>
+                            <h3>MediaPipe Face Detection</h3>
+                            <p>
+                                La libreria MediaPipe offre un modulo dedicato interamente alla face detection:
+                                <code>mp.solutions.face_detection</code>.
+                            </p>
+                            <p>
+                                Dopo aver correttamente istanziato un face detector, è possibile processare
+                                l'immagine:
+                            <div class="code-div"><code>result = face_detection.process(image)</code></div> <br />
+                            La variabile <code>result</code> conterrà tutte le informazioni utili
+                            all'identificazione dei volti nell'immagine (es. effettive detection, bounding box,
+                            ecc...).<br /><br />
+                            A questo punto, utilizzando le informazioni ottenute, è possibile effettuare le operazioni
+                            di cropping, rescaling e conversione dei colori (per un esempio pratico, fare riferimento
+                            alla classe <code>MediaPipeDetector</code> in
+                            <a href="https://github.com/uni-dario-bas/progetto-visione-e-percezione/blob/main/app/emotion_labeler/detectors.py#L18"
+                                target="_blank">app/emotion_labeler/detectors.py</a>).<br />
+                            </p>
+                            <h4>Esempio</h4>
+                            <p>
+                                Si riporta un'esempio di preprocessing effettuato sulla seguente immagine:
+                            <div>
+                                <img src="img/nadal/nadal.jpeg" width="350" class="img-responsive" alt="Rafael Nadal" />
+                                <p class="img-description">Rafael Nadal - 22 volte campione Slam (al 1/11/2022)</p>
+                            </div>
+                            <br />
+                            <div>
+                                <img src="img/nadal/face-detection.png" class="img-responsive"
+                                    alt="Passo 1: Face detection" />
+                                <p class="img-description">Passo 1: Face detection</p>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <img src="img/nadal/cropping.png" class="img-responsive" alt="Passo 2: Cropping" />
+                                    <p class="img-description">Passo 2: Cropping</p>
+                                </div>
+                                <div class="col-xs-4">
+                                    <img src="img/nadal/rescaling.png" class="img-responsive"
+                                        alt="Passo 3: Rescaling" />
+                                    <p class="img-description">Passo 3: Rescaling</p>
+                                </div>
+                                <div class="col-xs-4">
+                                    <img src="img/nadal/grayscale.png" class="img-responsive"
+                                        alt="Passo 4: Conversione dei colori" />
+                                    <p class="img-description">Passo 4: Conversione dei colori</p>
+                                </div>
+                            </div>
+                            </p>
+                            <h3>OpenCV Haar Cascades</h3>
+                            <p>
+                                La libreria OpenCV offre un classificatore Haar Feature-Based dedicato ai volti:
+                                <code>cv2.CascadeClassifier</code>.
+                            </p>
+                            <p>
+                                Come nel caso precedente, una volta istanziato il classificatore, è possibile avviare
+                                l'operazione di detection utilizzando l'oggetto creato (attenzione, però, in questo caso
+                                l'immagine analizzata deve già essere stata convertita in scala di grigi):
+                            <div class="code-div"><code>faces = face_cascade.detectMultiScale(grayscaled_img)</code>
+                            </div>
+                            </p>
+                            <p>
+                                A questo punto, la variabile <code>faces</code> conterrà tutti i riferimenti alle
+                                bounding box relative ai volti dell'immagine e sarà possibile procedere con i passi
+                                successivi (per un esempio pratico, fare riferimento alla classe
+                                <code>HaarCascadesDetector</code> in <a
+                                    href="https://github.com/uni-dario-bas/progetto-visione-e-percezione/blob/main/app/emotion_labeler/detectors.py#L68"
+                                    target="_blank">app/emotion_labeler/detectors.py</a>).
+                            </p>
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </section>
+                <!--//section-->
+
+                <section class="about section">
+                    <div class="section-inner">
+                        <h2 class="heading"><a id="classificatori"></a>Classificatori</h2>
+                        <div class="content">
+                            <p>
+                                Al fine di addestrare un classificatore da utilizzare nell'applicativo, sono stati
+                                sperimentati diversi algoritmi e tecniche di machine learning.
+                            </p>
+                            <h3>Algoritmi classici</h3>
+                            <p>Riferimento: <a
+                                    href="https://github.com/uni-dario-bas/progetto-visione-e-percezione/blob/main/notebook/AlgoritmiClassici.ipynb"
+                                    target="_blank">AlgoritmiClassici.ipynb</a></p>
+                            <p>
+                                In un primo momento, sono stati utilizzati tre algoritmi classici di classificazione:
+                            <ul>
+                                <li>Support Vector Machine;</li>
+                                <li>Stochastic Gradient Descent;</li>
+                                <li>Multi-Layer Perceptron.</li>
+                            </ul>
+                            Per tutti questi algoritmi, sono risultati poco soddisfacenti persino i risultati ottenuti
+                            prendendo in considerazione un numero ristretto di classi (es. solo immagini felici o
+                            tristi).
+                            </p>
+                            <p>
+                                Si riportano i punteggi ottenuti addestrando i modelli sui seguenti dati:
+                            <div>
+                                <img src="img/algoritmi-classici/dati.png" class="img-responsive"
+                                    alt="Dati algoritmi classici" width="250" />
+                                <p class="img-description">Dati: 2500 immagini etichettate come "happy" e 2500 come
+                                    "sad"</p>
+                            </div>
+                            </p>
+
+                            <h4>Support Vector Machine</h4>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <p class="img-description">Learning Curves per SVC</p>
+                                    <img src="img/algoritmi-classici/svc_learning_curves.png" class="img-responsive"
+                                        alt="SVC Learning Curves" width="300" />
+                                </div>
+                                <div class="col-xs-6">
+                                    <p class="img-description">Confusion Matrix per SVC</p>
+                                    <img src="img/algoritmi-classici/svc_confusion_matrix.png" class="img-responsive"
+                                        alt="SVC Confusion Matrix" width="300" />
+                                </div>
+                            </div>
+                            <br />
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th></th>
+                                        <th>Precision</th>
+                                        <th>Recall</th>
+                                        <th>F1-Score</th>
+                                        <th>Support</th>
+                                    </tr>
+                                    <tr>
+                                        <th>happy</th>
+                                        <td>0.76</td>
+                                        <td>0.67</td>
+                                        <td>0.71</td>
+                                        <td>776</td>
+                                    </tr>
+                                    <tr>
+                                        <th>sad</th>
+                                        <td>0.68</td>
+                                        <td>0.77</td>
+                                        <td>0.72</td>
+                                        <td>725</td>
+                                    </tr>
+                                    <tr class="empty-row"></tr>
+                                    <tr>
+                                        <th>Accuracy</th>
+                                        <td></td>
+                                        <td></td>
+                                        <td>0.72</td>
+                                        <td>1501</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Macro Avg.</th>
+                                        <td>0.72</td>
+                                        <td>0.72</td>
+                                        <td>0.72</td>
+                                        <td>1501</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Weighted Avg.</th>
+                                        <td>0.72</td>
+                                        <td>0.72</td>
+                                        <td>0.72</td>
+                                        <td>1501</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h4>Stochastic Gradient Descent</h4>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <p class="img-description">Learning Curves per SGD</p>
+                                    <img src="img/algoritmi-classici/sgd_learning_curves.png" class="img-responsive"
+                                        alt="SGD Learning Curves" width="300" />
+                                </div>
+                                <div class="col-xs-6">
+                                    <p class="img-description">Confusion Matrix per SGD</p>
+                                    <img src="img/algoritmi-classici/sgd_confusion_matrix.png" class="img-responsive"
+                                        alt="SGD Confusion Matrix" width="300" />
+                                </div>
+                            </div>
+                            <br />
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th></th>
+                                        <th>Precision</th>
+                                        <th>Recall</th>
+                                        <th>F1-Score</th>
+                                        <th>Support</th>
+                                    </tr>
+                                    <tr>
+                                        <th>happy</th>
+                                        <td>0.66</td>
+                                        <td>0.59</td>
+                                        <td>0.62</td>
+                                        <td>776</td>
+                                    </tr>
+                                    <tr>
+                                        <th>sad</th>
+                                        <td>0.60</td>
+                                        <td>0.77</td>
+                                        <td>0.64</td>
+                                        <td>725</td>
+                                    </tr>
+                                    <tr class="empty-row"></tr>
+                                    <tr>
+                                        <th>Accuracy</th>
+                                        <td></td>
+                                        <td></td>
+                                        <td>0.63</td>
+                                        <td>1501</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Macro Avg.</th>
+                                        <td>0.63</td>
+                                        <td>0.63</td>
+                                        <td>0.63</td>
+                                        <td>1501</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Weighted Avg.</th>
+                                        <td>0.63</td>
+                                        <td>0.63</td>
+                                        <td>0.63</td>
+                                        <td>1501</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h4>Multi-Layer Perceptron</h4>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <p class="img-description">Learning Curves per MLP</p>
+                                    <img src="img/algoritmi-classici/mlp_learning_curves.png" class="img-responsive"
+                                        alt="MLP Learning Curves" width="300" />
+                                </div>
+                                <div class="col-xs-6">
+                                    <p class="img-description">Confusion Matrix per MLP</p>
+                                    <img src="img/algoritmi-classici/mlp_confusion_matrix.png" class="img-responsive"
+                                        alt="MLP Confusion Matrix" width="300" />
+                                </div>
+                            </div>
+                            <br />
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th></th>
+                                        <th>Precision</th>
+                                        <th>Recall</th>
+                                        <th>F1-Score</th>
+                                        <th>Support</th>
+                                    </tr>
+                                    <tr>
+                                        <th>happy</th>
+                                        <td>0.68</td>
+                                        <td>0.61</td>
+                                        <td>0.64</td>
+                                        <td>776</td>
+                                    </tr>
+                                    <tr>
+                                        <th>sad</th>
+                                        <td>0.62</td>
+                                        <td>0.68</td>
+                                        <td>0.65</td>
+                                        <td>725</td>
+                                    </tr>
+                                    <tr class="empty-row"></tr>
+                                    <tr>
+                                        <th>Accuracy</th>
+                                        <td></td>
+                                        <td></td>
+                                        <td>0.65</td>
+                                        <td>1501</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Macro Avg.</th>
+                                        <td>0.65</td>
+                                        <td>0.65</td>
+                                        <td>0.65</td>
+                                        <td>1501</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Weighted Avg.</th>
+                                        <td>0.65</td>
+                                        <td>0.65</td>
+                                        <td>0.65</td>
+                                        <td>1501</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3>VGG-16 Like</h3>
+                            <p>Riferimento: <a
+                                    href="https://github.com/uni-dario-bas/progetto-visione-e-percezione/blob/main/notebook/VGGLikeDeepClassifier.ipynb"
+                                    target="_blank">VGGLikeDeepClassifier.ipynb</a></p>
+                            <p>
+                                È stata poi utilizzata una rete neurale convoluzionale profonda avente struttura simile
+                                alla rete VGG-16. <br />
+                                In estrema sintesi, questa prevede una sequenza di layer convoluzionali (terminante
+                                ciascuno in un layer di pooling)
+                                agganciati ad una sequenza di layer completamente connessi.<br /><br />
+                                La figura seguente riporta uno schema dell'architettura:
+                            <div>
+                                <img src="img/vgg16-arch.jpeg" class="img-responsive" alt="Architettura VGG-16" />
+                                <p class="img-description">Architettura VGG-16 (fonte: <a
+                                        href="https://neurohive.io/en/popular-networks/vgg16/"
+                                        target="_blank">Neurohive</a>)</p>
+                            </div>
+                            </p>
+
+                            <br />
+                            <h4>Caso dataset ridotto</h4>
+                            <p>
+                                In questo caso, i risultati ottenuti con il dataset ridotto (solo immagini felici /
+                                tristi) sono eccellenti.
+                            </p>
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <p class="img-description">Accuracy per VGG-16</p>
+                                    <img src="img/vgg-like/happy-sad-accuracy.png" class="img-responsive"
+                                        alt="VGG-16 happy-sad Accuracy" width="300" />
+                                </div>
+                                <div class="col-xs-4">
+                                    <p class="img-description">Loss per VGG-16</p>
+                                    <img src="img/vgg-like/happy-sad-loss.png" class="img-responsive"
+                                        alt="VGG-16 happy-sad Loss" width="300" />
+                                </div>
+                                <div class="col-xs-4">
+                                    <p class="img-description">Confusion Matrix per VGG-16</p>
+                                    <img src="img/vgg-like/happy-sad-confusion.png" class="img-responsive"
+                                        alt="VGG-16 happy-sad Confusion Matrix" width="300" />
+                                </div>
+                            </div>
+                            <br />
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th></th>
+                                        <th>Precision</th>
+                                        <th>Recall</th>
+                                        <th>F1-Score</th>
+                                        <th>Support</th>
+                                    </tr>
+                                    <tr>
+                                        <th>happy</th>
+                                        <td>0.94</td>
+                                        <td>0.91</td>
+                                        <td>0.93</td>
+                                        <td>2380</td>
+                                    </tr>
+                                    <tr>
+                                        <th>sad</th>
+                                        <td>0.88</td>
+                                        <td>0.92</td>
+                                        <td>0.90</td>
+                                        <td>1595</td>
+                                    </tr>
+                                    <tr class="empty-row"></tr>
+                                    <tr class="success">
+                                        <th>Accuracy</th>
+                                        <td></td>
+                                        <td></td>
+                                        <td>0.92</td>
+                                        <td>3975</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Macro Avg.</th>
+                                        <td>0.91</td>
+                                        <td>0.92</td>
+                                        <td>0.91</td>
+                                        <td>3975</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Weighted Avg.</th>
+                                        <td>0.92</td>
+                                        <td>0.92</td>
+                                        <td>0.92</td>
+                                        <td>3975</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h4>Caso dataset completo</h4>
+                            <p>
+                                Il dataset utilizzato per l'addestramento è il FER-2013:
+                            <div>
+                                <img src="img/vgg-like/stats.png" class="img-responsive" alt="Dataset FER-2013" />
+                                <p class="img-description">Il dataset FER-2013</p>
+                            </div>
+                            </p>
+                            <p>
+                                È facile intuire come la presenza di dati <em>skewed</em> possa rappresentare una
+                                difficoltà aggiunta per l'addestramento del modello.
+                            </p>
+                            <p>
+                                I risultati sono riportati di seguito:
+                            </p>
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <p class="img-description">Accuracy per VGG-16</p>
+                                    <img src="img/vgg-like/accuracy.png" class="img-responsive" alt="VGG-16 Accuracy"
+                                        width="300" />
+                                </div>
+                                <div class="col-xs-4">
+                                    <p class="img-description">Loss per VGG-16</p>
+                                    <img src="img/vgg-like/loss.png" class="img-responsive" alt="VGG-16 happy-sad Loss"
+                                        width="300" />
+                                </div>
+                                <div class="col-xs-4">
+                                    <p class="img-description">Confusion Matrix per VGG-16</p>
+                                    <img src="img/vgg-like/confusion.png" class="img-responsive"
+                                        alt="VGG-16 Confusion Matrix" width="300" />
+                                </div>
+                            </div>
+                            <br />
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th></th>
+                                        <th>Precision</th>
+                                        <th>Recall</th>
+                                        <th>F1-Score</th>
+                                        <th>Support</th>
+                                    </tr>
+                                    <tr class="success">
+                                        <th>happy</th>
+                                        <td>0.86</td>
+                                        <td>0.85</td>
+                                        <td>0.85</td>
+                                        <td>2429</td>
+                                    </tr>
+                                    <tr>
+                                        <th>sad</th>
+                                        <td>0.54</td>
+                                        <td>0.50</td>
+                                        <td>0.52</td>
+                                        <td>1588</td>
+                                    </tr>
+                                    <tr>
+                                        <th>angry</th>
+                                        <td>0.55</td>
+                                        <td>0.55</td>
+                                        <td>0.55</td>
+                                        <td>1303</td>
+                                    </tr>
+                                    <tr class="danger">
+                                        <th>disgust</th>
+                                        <td>0.69</td>
+                                        <td>0.28</td>
+                                        <td>0.40</td>
+                                        <td>141</td>
+                                    </tr>
+                                    <tr>
+                                        <th>fear</th>
+                                        <td>0.56</td>
+                                        <td>0.30</td>
+                                        <td>0.39</td>
+                                        <td>1338</td>
+                                    </tr>
+                                    <tr>
+                                        <th>neutral</th>
+                                        <td>0.50</td>
+                                        <td>0.77</td>
+                                        <td>0.60</td>
+                                        <td>1621</td>
+                                    </tr>
+                                    <tr>
+                                        <th>surprise</th>
+                                        <td>0.75</td>
+                                        <td>0.76</td>
+                                        <td>0.76</td>
+                                        <td>1054</td>
+                                    </tr>
+                                    <tr class="empty-row"></tr>
+                                    <tr class="warning">
+                                        <th>Accuracy</th>
+                                        <td></td>
+                                        <td></td>
+                                        <td>0.64</td>
+                                        <td>9474</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Macro Avg.</th>
+                                        <td>0.64</td>
+                                        <td>0.57</td>
+                                        <td>0.58</td>
+                                        <td>9474</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Weighted Avg.</th>
+                                        <td>0.65</td>
+                                        <td>0.64</td>
+                                        <td>0.63</td>
+                                        <td>9474</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3>ResNet50V2</h3>
+                            <p>Riferimento: <a
+                                    href="https://github.com/uni-dario-bas/progetto-visione-e-percezione/blob/main/notebook/ResNetV2Classifier.ipynb"
+                                    target="_blank">ResNetV2Classifier.ipynb</a></p>
+                            <p>
+                                L'ultima architettura presa in analisi è ResNetV2, una rete neurale convoluzionale
+                                profonda ideata da Christian Szegedy, Sergey
+                                Ioffe, Vincent Vanhoucke ed Alex Alemi (<a href="https://arxiv.org/abs/1602.07261v2"
+                                    target="_blank">qui</a> la pubblicazione) avente la seguente struttura:
+                            <div>
+                                <img src="img/resnetv2-arch.png" class="img-responsive" alt="Architettura ResNetV2"
+                                    width="250" />
+                                <p class="img-description">Architettura VGG-16 (fonte: <a
+                                        href="https://paperswithcode.com/method/inception-resnet-v2"
+                                        target="_blank">Papers with code</a>)</p>
+                            </div>
+                            </p>
+                            <p>
+                                La rete è disponibile tra le <a href="https://keras.io/api/applications/"
+                                    target="_blank">Applications</a> predefinite di Keras, per cui non è necessario
+                                modellare l'architettura via codice.
+                            </p>
+                            <p>
+                                In questo caso, i risultati sul dataset completo sono i seguenti:
+                            </p>
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <p class="img-description">Accuracy per ResNet50V2</p>
+                                    <img src="img/resnetv2/accuracy.png" class="img-responsive"
+                                        alt="ResNet50V2 Accuracy" width="300" />
+                                </div>
+                                <div class="col-xs-4">
+                                    <p class="img-description">Loss per ResNet50V2</p>
+                                    <img src="img/resnetv2/loss.png" class="img-responsive"
+                                        alt="ResNet50V2 happy-sad Loss" width="300" />
+                                </div>
+                                <div class="col-xs-4">
+                                    <p class="img-description">Confusion Matrix per ResNet50V2</p>
+                                    <img src="img/resnetv2/confusion.png" class="img-responsive"
+                                        alt="ResNet50V2 Confusion Matrix" width="300" />
+                                </div>
+                            </div>
+                            <br />
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th></th>
+                                        <th>Precision</th>
+                                        <th>Recall</th>
+                                        <th>F1-Score</th>
+                                        <th>Support</th>
+                                    </tr>
+                                    <tr class="success">
+                                        <th>happy</th>
+                                        <td>0.85</td>
+                                        <td>0.81</td>
+                                        <td>0.83</td>
+                                        <td>2381</td>
+                                    </tr>
+                                    <tr>
+                                        <th>sad</th>
+                                        <td>0.48</td>
+                                        <td>0.51</td>
+                                        <td>0.50</td>
+                                        <td>1598</td>
+                                    </tr>
+                                    <tr>
+                                        <th>angry</th>
+                                        <td>0.54</td>
+                                        <td>0.53</td>
+                                        <td>0.53</td>
+                                        <td>1348</td>
+                                    </tr>
+                                    <tr>
+                                        <th>disgust</th>
+                                        <td>0.70</td>
+                                        <td>0.39</td>
+                                        <td>0.50</td>
+                                        <td>141</td>
+                                    </tr>
+                                    <tr class="danger">
+                                        <th>fear</th>
+                                        <td>0.44</td>
+                                        <td>0.42</td>
+                                        <td>0.43</td>
+                                        <td>1320</td>
+                                    </tr>
+                                    <tr>
+                                        <th>neutral</th>
+                                        <td>0.55</td>
+                                        <td>0.61</td>
+                                        <td>0.58</td>
+                                        <td>1653</td>
+                                    </tr>
+                                    <tr>
+                                        <th>surprise</th>
+                                        <td>0.71</td>
+                                        <td>0.72</td>
+                                        <td>0.72</td>
+                                        <td>1030</td>
+                                    </tr>
+                                    <tr class="empty-row"></tr>
+                                    <tr class="warning">
+                                        <th>Accuracy</th>
+                                        <td></td>
+                                        <td></td>
+                                        <td>0.61</td>
+                                        <td>9474</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Macro Avg.</th>
+                                        <td>0.61</td>
+                                        <td>0.57</td>
+                                        <td>0.58</td>
+                                        <td>9474</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Weighted Avg.</th>
+                                        <td>0.62</td>
+                                        <td>0.61</td>
+                                        <td>0.61</td>
+                                        <td>9474</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </section>
+                <!--//section-->
+
+                <section class="about section">
+                    <div class="section-inner">
+                        <h2 class="heading"><a id="codice"></a>Implementazione e Codice</h2>
+                        <div class="content">
+                            <p>Per sviluppare l'applicazione sono state utilizzate le seguenti tecnologie:</p>
+                            <ul>
+                                <li><a href="https://www.python.org/" target="_blank">Python 3.7.12</a>;</li>
+                                <li><a href="https://jupyter.org/" target="_blank">Jupyter Notebook</a> / <a
+                                        href="https://colab.research.google.com/" target="_blank">Google Colab</a>;</li>
+                                <br />
+                                <li><a href="https://google.github.io/mediapipe/" target="_blank">MediaPipe</a>;</li>
+                                <li><a href="https://opencv.org/" target="_blank">OpenCV</a>;</li>
+                                <li><a href="https://github.com/serengil/deepface" target="_blank">DeepFace</a>;</li>
+                                <br />
+                                <li><a href="https://scikit-learn.org/stable/" target="_blank">Scikit Learn</a>;</li>
+                                <li><a href="https://www.tensorflow.org/" target="_blank">Tensorflow</a>;</li>
+                                <li><a href="https://keras.io/" target="_blank">Keras</a>;</li>
+                                <br />
+                                <li><a href="https://www.pysimplegui.org/en/latest/" target="_blank">PySimpleGUI</a>.
+                                </li>
+                            </ul>
+
+                            <br />
+                            <h3>Codice</h3>
+                            <p>
+                                <a href="https://github.com/uni-dario-bas/progetto-visione-e-percezione"
+                                    target="_blank">
+                                    uni-dario-bas: progetto-visione-e-percezione
+                                </a>
+                            </p>
+
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </section>
+                <!--//section-->
+
+                <section class="about section">
+                    <div class="section-inner">
+                        <h2 class="heading"><a id="applicazione"></a>How are You?</h2>
+                        <div class="content">
+                            <p>Riferimento: <a
+                                    href="https://github.com/uni-dario-bas/progetto-visione-e-percezione/blob/main/app/emotion_labeler/main.py"
+                                    target="_blank">How are You?</a></p>
+                            <p>
+                                L'applicazione permette di generare un dataset simil FER-2013 in maniera
+                                semi-automatica a partire da un file video.
+                                Il funzionamento è il seguente:
+                            <ol>
+                                <li>L'utente seleziona un file video e configura i vari parametri dell'applicativo;</li>
+                                <li>L'applicativo estrae automaticamente i volti dal video attribuendo a ciascuno
+                                    un'etichetta selezionata tra quelle del dataset FER-2013;</li>
+                                <li>L'utente revisiona il lavoro svolto automaticamente e, se necessario, modifica /
+                                    rimuove alcune etichette;</li>
+                                <li>L'utente salva il nuovo dataset;</li>
+                            </ol>
+                            </p>
+                            <p>
+                                Le fasi a carico dell'utente sono due: quella di configurazione e quella di revisione.
+                            </p>
+                            <h3>Fase di configurazione</h3>
+                            <div>
+                                <img src="img/app-config.png" class="img-responsive"
+                                    alt="Schermata configurazione applicazione" width="400" />
+                                <p class="img-description">Schermata di configurazione dell'applicazione</p>
+                            </div>
+                            <p>
+                                Nella fase di configurazione, l'applicazione prevede diverse sezioni, ciascuna dedicata
+                                alla configurazione di parametri specifici.
+                            </p>
+                            <p>
+                                <strong>Configurazione generica</strong><br />
+                                Consente di selezionare il video da processare e la cartella all'interno della quale
+                                andare a salvare il dataset generato.
+                            </p>
+                            <p>
+                                <strong>Face Detector</strong><br />
+                                Consente di selezionare quale pipeline di preprocessing utilizzare in fase di analisi
+                                dei singoli fotogrammi del video.
+                            </p>
+                            <p>
+                                <strong>Backend</strong><br />
+                                Consente di selezionare quali modelli utilizzare per etichettare le immagini.<br />
+                                Inoltre, permette di dare un peso alla previsione effettuata da ciascun modello in modo
+                                che, nel caso di utilizzo combinato, ogni algoritmo contribuisca differentemente al
+                                risultato finale.<br /><br />
+                                <em>Nota: degli algoritmi presentati nella sezione precedente, per ragioni di efficienza
+                                    dell'applicativo, è stato integrato esclusivamente il modello basato su architettura
+                                    VGG-16. È stato inserito, però, il classificatore contenuto nella libreria <a
+                                        href="https://pypi.org/project/deepface/" target="_blank">DeepFace</a></em>.
+                            </p>
+                            <p>
+                                <strong>Undersampler</strong><br />
+                                Permette di selezionare una strategia di riduzione del numero totale di frame
+                                estratti dal video.<br /> <br />
+                                L'opzione <em>Random</em> seleziona una percentuale (definibile nella casella di input
+                                posta di fianco alla checkbox) casuale del numero totale di frame.<br /> <br />
+                                L'opzione <em>Histogram</em>, invece, elimina quei frame per i quali il confronto tra i
+                                relativi
+                                istogrammi è maggiore di una determinata soglia (definibile nella casella di input
+                                posta di fianco alla checkbox).
+                            </p>
+
+                            <h3>Fase di revisione</h3>
+                            <div>
+                                <img src="img/app-label.png" class="img-responsive"
+                                    alt="Schermata revisione applicazione" width="400" />
+                                <p class="img-description">Schermata di revisione dell'applicazione</p>
+                            </div>
+                            <p>
+                                La schermata permette di modificare l'etichetta assegnata ad un dato frame o di
+                                rimuoverlo dalla lista di immagini generate (utile nel caso in cui l'algoritmo di face
+                                detection abbia individuato un falso positivo).
+                            </p>
+
+                            <h3>Salvataggio del dataset</h3>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <img src="img/cartelle-dataset.png" class="img-responsive"
+                                        alt="Schermata revisione applicazione" width="400" />
+                                    <p class="img-description">Esempio di dataset generato</p>
+                                </div>
+                                <div class="col-xs-6">
+                                    <img src="img/cartelle-neutral.png" class="img-responsive"
+                                        alt="Schermata revisione applicazione" width="400" />
+                                    <p class="img-description">Esempio di insieme di immagini etichettate come
+                                        <em>neutral</em>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <p>
+                                Al termine della fase di revisione, le immagini etichettate vengono salvate nella
+                                cartella specificata in fase di configurazione seguendo la struttura del dataset
+                                FER-2013: una cartella per ogni etichetta contenente tutte le immagini associate a
+                                quest'ultima.
+                            </p>
+
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </section>
+                <!--//section-->
+
+                <section class="about section">
+                    <div class="section-inner">
+                        <h2 class="heading"><a id="appendice"></a>Appendice: Emoji Detector</h2>
+                        <div class="content">
+                            <p>Riferimento: <a
+                                    href="https://github.com/uni-dario-bas/progetto-visione-e-percezione/blob/main/app/emoji_detector/main.py"
+                                    target="_blank">emoji_detector</a></p>
+                            <p>
+                                Per testare l'effettiva efficacia del modello simil VGG-16 addestrato utilizzando solo
+                                due classi (happy / sad), è stata sviluppata un applicazione che, in tempo reale,
+                                sostituisce ad un
+                                volto l'emoji del sentimento relativo.
+                            </p>
+                            <p>
+                                Questa utilizza una pipeline di preprocessing del tutto analoga a quella presentata per
+                                l'applicazione "How are You?", ma, in aggiunta, sostituisce i pixel del volto con quelli
+                                di un emoji precaricata in fase di avvio.
+                            </p>
+                            <p>
+                                Si riportano, a titolo di esempio, due screenshot dell'applicativo.
+                            </p>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <img src="img/sad-emoji.png" class="img-responsive" alt="Sad emoji" width="400" />
+                                    <p class="img-description">Quando Yannik Sinner perde ai trentaduesimi di un Master
+                                        1000...</p>
+                                </div>
+                                <div class="col-xs-6">
+                                    <img src="img/happy-emoji.png" class="img-responsive" alt="Happy emoji"
+                                        width="400" />
+                                    <p class="img-description">ma Lorenzo Musetti ha battuto Marin Cilic!</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </section>
+                <!--//section-->
+
+            </div>
+            <!--//primary-->
+
+            <div class="secondary col-md-4 col-sm-12 col-xs-12">
+                <aside class="info aside section">
+                    <div class="section-inner">
+                        <h2 class="heading">Autore</h2>
+                        <div class="content">
+                            <p>Dario Satriani - 61196</p>
+                        </div>
+                        <br />
+                        <h2 class="heading">Docente</h2>
+                        <div class="content">
+                            <p>
+                                <a href="https://web.unibas.it/bloisi/" target="_blank">
+                                    Domenico Daniele Bloisi
+                                </a>
+                            </p>
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </aside>
+                <!--//aside-->
+
+
+                <aside class="blog aside section">
+                    <div class="section-inner">
+                        <h2 class="heading">Riferimenti</h2>
+                        <div class="content">
+                            <strong>Dataset</strong>
+                            <div class="item">
+                                <a href="https://www.kaggle.com/datasets/msambare/fer2013" target="_blank">FER-2013</a>
+                            </div>
+
+                            <strong>VGG-16</strong>
+                            <div class="item">
+                                <a href="https://arxiv.org/pdf/1409.1556.pdf" target="_blank">
+                                    Karen Simonyan, Andrew Zisserman - VERY DEEP CONVOLUTIONAL NETWORKS FOR LARGE-SCALE
+                                    IMAGE RECOGNITION
+                                </a>
+                            </div>
+
+                            <div class="item">
+                                <a href="https://neurohive.io/en/popular-networks/vgg16/" target="_blank">
+                                    Neurohive - VGG-16 overview
+                                </a>
+                            </div>
+
+                            <div class="item">
+                                <a href="https://github.com/jhan15/facial_emotion_recognition" target="_blank">
+                                    @jhan15 - Facial Emotion Recognition
+                                </a>
+                            </div>
+
+                            <strong>ResNetV2</strong>
+
+                            <div class="item">
+                                <a href="https://arxiv.org/pdf/1602.07261v2.pdf" target="_blank">
+                                    Christian Szegedy, Sergey Ioffe, Vincent Vanhoucke, Alex Alemi - Inception-v4,
+                                    Inception-ResNet and the Impact of Residual Connections on Learning
+                                </a>
+                            </div>
+
+                            <div class="item">
+                                <a href="https://keras.io/api/applications/resnet/#resnet50v2-function" target="_blank">
+                                    Keras ResNet50V2
+                                </a>
+                            </div>
+
+                            <div class="item">
+                                <a href="https://paperswithcode.com/method/inception-resnet-v2" target="_blank">
+                                    Papers with Code - Inception-ResNet-v2
+                                </a>
+                            </div>
+
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </aside>
+                <!--//section-->
+
+            </div>
+            <!--//secondary-->
+        </div>
+        <!--//row-->
+    </div>
+    <!--//masonry-->
+
+    <!-- ******FOOTER****** -->
+    <footer class="footer">
+        <div class="container text-center">
+            <small class="copyright">This template adapted from <a href="http://themes.3rdwavemedia.com/"
+                    target="_blank">3rd Wave Media</a></small>
+        </div>
+        <!--//container-->
+    </footer>
+    <!--//footer-->
+
+</body>
+
+</html>
