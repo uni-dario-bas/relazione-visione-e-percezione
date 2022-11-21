@@ -73,6 +73,7 @@
                                 <li><a href="#codice">Implementazione e Codice</a></li>
                                 <li><a href="#applicazione">How are You?</a></li>
                                 <li><a href="#appendice">Appendice: Emoji Detector</a></li>
+                                <li><a href="#appendice-video">Appendice: Video Emotion Detection</a></li>
                             </ol>
                         </div>
                         <!--//content-->
@@ -1009,6 +1010,57 @@
                                         width="400" />
                                     <p class="img-description">ma Lorenzo Musetti ha battuto Marin Cilic!</p>
                                 </div>
+                            </div>
+                        </div>
+                        <!--//content-->
+                    </div>
+                    <!--//section-inner-->
+                </section>
+                <!--//section-->
+
+                <section class="about section">
+                    <div class="section-inner">
+                        <h2 class="heading"><a id="appendice-video"></a>Appendice: Video Emotion Detection</h2>
+                        <div class="content">
+                            <p>Riferimento: <a
+                                    href="https://github.com/uni-dario-bas/progetto-visione-e-percezione/blob/main/app/video_emotion_detection/main.py"
+                                    target="_blank">Video Emotion Detection</a></p>
+                            <p>
+                                Per testare l'effettiva efficacia della pipeline di riconoscimento del volto e relativa
+                                analisi dell'emozione, è stata sviluppata un applicazione che, in tempo reale,
+                                applica la procedura ad un file video, mostrando il risultato frame dopo frame.
+                            </p>
+                            <p>
+                                L'applicazione permette, da linea di comando, di selezionare quale modello di Mediapipe
+                                utilizzare in fase di riconoscimento del volto.<br />
+                                Sono disponibili due alternative (fonte <a
+                                    href="https://google.github.io/mediapipe/solutions/face_detection.html#model_selection"
+                                    target="_blank">documentazione
+                                    MediaPipe</a>):
+                            <ul>
+                                <li>
+                                    Modello 0: modello per il riconoscimento di volti posti a circa due metri dalla
+                                    camera;
+                                </li>
+                                <li>
+                                    Modello 1: modello per il riconoscimento di volti posti a circa cinque metri dalla
+                                    camera.
+                                </li>
+                            </ul>
+                            Il modello utilizzato di default è il modello 1.
+                            </p>
+                            <p>
+                                Si riporta un breve esempio del funzionamento dell'applicativo.
+                            </p>
+                            <div>
+                                <video width="640" height="360" autoplay muted loop>
+                                    <source src="video/inferenza-continua.mov">
+                                    Il browser non supporta il tag video...
+                                </video>
+                                <p class="img-description">Funzionamento dell'applicazione (video: <a
+                                        href="https://www.youtube.com/watch?v=XoxsFoTCz4Q" target="_blank">Ibrahim
+                                        Maalouf -
+                                        Happy Face</a>)</p>
                             </div>
                         </div>
                         <!--//content-->
